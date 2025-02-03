@@ -33,7 +33,7 @@ class Product:
         if new_price > 0:
             self.__price = new_price
         else:
-            print("Цена не должна быть нулевой или отрицательной")
+            raise ValueError("Цена должна быть больше нуля.")
 
 
 class Category:
@@ -55,8 +55,11 @@ class Category:
 
     def add_product(self, product):
         """
-        Метод для добавления продукта в категорию.
+        Метод для добавления продукта в категорию с проверкой типа.
         """
+        if not isinstance(product, Product):
+            print("Ошибка: добавляемый объект должен быть экземпляром класса Product или его наследником.")
+            return
         self.__products.append(product)
         Category.product_count += 1
 

@@ -29,8 +29,30 @@ class TestProduct(unittest.TestCase):
         product.price = 200.0
         self.assertEqual(product.price, 200.0)
 
-        product.price = -50.0  # Некорректное значение
-        self.assertEqual(product.price, 200.0)  # Цена не должна измениться
+        with self.assertRaises(ValueError):  # Ожидаем ошибку при установке отрицательной цены
+            product.price = -50.0
+
+        with self.assertRaises(ValueError):  # Ожидаем ошибку при установке нулевой цены
+            product.price = 0.0
+
+    def test_extreme_price_values(self):
+        """Проверка крайних значений для цены."""
+        product = Product("Безделушка", "Описание", 1.0, 10)
+
+        # Проверка очень большого значения цены
+        extreme_price = 1e10
+        product.price = extreme_price
+        self.assertEqual(product.price, extreme_price)
+
+        # Проверка очень маленького положительного значения цены
+        small_positive_price = 1e-10
+        product.price = small_positive_price
+        self.assertEqual(product.price, small_positive_price)
+
+        # Проверка граничного значения (очень близкого к нулю, но не равного)
+        borderline_price = 1e-15
+        product.price = borderline_price
+        self.assertEqual(product.price, borderline_price)
 
 
 class TestCategory(unittest.TestCase):
@@ -63,6 +85,12 @@ class TestCategory(unittest.TestCase):
         self.assertIn("Безделушка2, 200.0 руб. Остаток: 3 шт.", category.formatted_products())
         self.assertEqual(Category.product_count, 2)
 
+    def test_add_invalid_product(self):
+        """Проверка добавления некорректного объекта в категорию."""
+        category = Category("Категория", "Описание категории", [self.product1])
+        category.add_product("Некорректный объект")  # Попытка добавить строку вместо объекта Product
+        self.assertEqual(len(category.products), 1)  # Количество продуктов не должно измениться
+
     def test_category_and_product_counts(self):
         """Проверка подсчёта категорий и продуктов."""
         Category("Категория1", "Описание1", [self.product1])
@@ -85,6 +113,13 @@ class TestCategory(unittest.TestCase):
         product3 = Product("Продукт3", "Описание3", 300.0, 7)
         Category("Категория2", "Описание2", [product3])
         self.assertEqual(Category.category_count, 2)
+        self.assertEqual(Category.product_count, 2)
+
+    def test_add_duplicate_product(self):
+        """Проверка добавления одного и того же продукта несколько раз."""
+        category = Category("Категория", "Описание категории", [self.product1])
+        category.add_product(self.product1)  # Добавляем тот же продукт снова
+        self.assertEqual(len(category.products), 2)  # Ожидаем два одинаковых продукта в списке
         self.assertEqual(Category.product_count, 2)
 
 
