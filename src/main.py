@@ -1,4 +1,4 @@
-from load_products import load_categories_from_json
+from src.load_products import load_categories_from_json
 
 
 class Product:

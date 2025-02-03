@@ -17,6 +17,21 @@ class TestProduct(unittest.TestCase):
         self.assertEqual(product.price, 100.0)
         self.assertEqual(product.quantity, 10)
 
+    def test_price_private_attribute(self):
+        """Проверка, что price является приватным атрибутом."""
+        product = Product("Test Product", "Description", 100.0, 10)
+        with self.assertRaises(AttributeError):
+            _ = product.__price
+
+    def test_price_getter_setter(self):
+        """Проверка работы геттера и сеттера для цены."""
+        product = Product("Test Product", "Description", 100.0, 10)
+        product.price = 200.0
+        self.assertEqual(product.price, 200.0)
+
+        product.price = -50.0  # Некорректное значение
+        self.assertEqual(product.price, 200.0)  # Цена не должна измениться
+
 
 class TestCategory(unittest.TestCase):
     def setUp(self):
