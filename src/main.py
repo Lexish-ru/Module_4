@@ -21,14 +21,20 @@ class Category:
         """
         Класс Category представляет категорию товаров.
         """
-        # Атрибуты объекта
         self.name = name
         self.description = description
-        self.products = products
+        self.__products = products  # Приватный атрибут списка товаров
 
         # Автоматическое обновление атрибутов класса
         Category.category_count += 1
-        Category.product_count += len(products)  # Учитывает только количество объектов, без их quantity
+        Category.product_count += len(products)
+
+    def add_product(self, product):
+        """
+        Метод для добавления продукта в категорию.
+        """
+        self.__products.append(product)
+        Category.product_count += 1
 
 
 def main():
@@ -40,7 +46,7 @@ def main():
     # Вывод информации о категориях и продуктах
     for category in categories:
         print(f"Категория: {category.name}, Описание: {category.description}")
-        for product in category.products:
+        for product in category._Category__products:  # Временный доступ для проверки
             print(f"  - {product.name}: {product.description} ({product.price} руб, {product.quantity} шт)")
 
 
