@@ -82,7 +82,7 @@ class TestCategory(unittest.TestCase):
         self.assertEqual(Category.category_count, 1)
         self.assertEqual(Category.product_count, 1)
 
-        product3 = Product("Product3", "Описание3", 300.0, 7)
+        product3 = Product("Продукт3", "Описание3", 300.0, 7)
         Category("Категория2", "Описание2", [product3])
         self.assertEqual(Category.category_count, 2)
         self.assertEqual(Category.product_count, 2)
