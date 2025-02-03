@@ -67,6 +67,7 @@ class Category:
         :return:
         """
         return self.__products
+
     def formatted_products(self):
         """
         Геттер для получения списка продуктов в формате строки.
