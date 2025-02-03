@@ -8,7 +8,7 @@ class Product:
         """
         self.name = name
         self.description = description
-        self.price = price
+        self.__price = price  # Приватный атрибут цены
         self.quantity = quantity
 
     @classmethod
@@ -17,6 +17,23 @@ class Product:
         Класс-метод для создания нового продукта из словаря.
         """
         return cls(**product_info)
+
+    @property
+    def price(self):
+        """
+        Геттер для получения цены товара.
+        """
+        return self.__price
+
+    @price.setter
+    def price(self, new_price: float):
+        """
+        Сеттер для установки новой цены товара с проверкой валидности.
+        """
+        if new_price > 0:
+            self.__price = new_price
+        else:
+            print("Цена не должна быть нулевой или отрицательной")
 
 
 class Category:
