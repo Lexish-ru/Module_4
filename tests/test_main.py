@@ -1,11 +1,12 @@
-import unittest
-import sys
 import os
+import sys
+import unittest
+
+from src.main import Category, Product
 
 # Добавляем путь к src в sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
 
-from src.main import Product, Category
 
 class TestProduct(unittest.TestCase):
     def test_product_initialization(self):
@@ -15,6 +16,7 @@ class TestProduct(unittest.TestCase):
         self.assertEqual(product.description, "Description")
         self.assertEqual(product.price, 100.0)
         self.assertEqual(product.quantity, 10)
+
 
 class TestCategory(unittest.TestCase):
     def setUp(self):
@@ -58,5 +60,6 @@ class TestCategory(unittest.TestCase):
         self.assertEqual(Category.category_count, 2)
         self.assertEqual(Category.product_count, 2)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()
