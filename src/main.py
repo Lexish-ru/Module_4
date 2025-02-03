@@ -63,12 +63,17 @@ class Category:
     @property
     def products(self):
         """
+        Геттер для получения списка продуктов в виде объектов
+        :return:
+        """
+        return self.__products
+    def formatted_products(self):
+        """
         Геттер для получения списка продуктов в формате строки.
         """
-        return "".join([
-            f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n"
-            for product in self.__products
-        ])
+        return "".join(
+            [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n" for product in self.__products]
+        )
 
 
 def main():
@@ -80,7 +85,7 @@ def main():
     # Вывод информации о категориях и продуктах
     for category in categories:
         print(f"Категория: {category.name}, Описание: {category.description}")
-        print(category.products)  # Используем геттер для вывода товаров
+        print(category.formatted_products())  # Используем геттер для вывода товаров
 
 
 if __name__ == "__main__":
