@@ -65,6 +65,13 @@ class Category:
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity}"
 
+    def __iter__(self):
+        """
+        Итератор для перебора продуктов в категории.
+        """
+        return iter(self.__products)
+
+
     def add_product(self, product):
         """
         Метод для добавления продукта в категорию с проверкой типа.
