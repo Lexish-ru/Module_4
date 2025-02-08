@@ -1,4 +1,4 @@
-from load_products import load_categories_from_json
+from src.load_products import load_categories_from_json
 
 
 class Product:
@@ -8,8 +8,32 @@ class Product:
         """
         self.name = name
         self.description = description
-        self.price = price
+        self.__price = price  # Приватный атрибут цены
         self.quantity = quantity
+
+    @classmethod
+    def new_product(cls, product_info: dict):
+        """
+        Класс-метод для создания нового продукта из словаря.
+        """
+        return cls(**product_info)
+
+    @property
+    def price(self):
+        """
+        Геттер для получения цены товара.
+        """
+        return self.__price
+
+    @price.setter
+    def price(self, new_price: float):
+        """
+        Сеттер для установки новой цены товара с проверкой валидности.
+        """
+        if new_price > 0:
+            self.__price = new_price
+        else:
+            raise ValueError("Цена должна быть больше нуля.")
 
 
 class Category:
@@ -21,14 +45,39 @@ class Category:
         """
         Класс Category представляет категорию товаров.
         """
-        # Атрибуты объекта
         self.name = name
         self.description = description
-        self.products = products
+        self.__products = products  # Приватный атрибут списка товаров
 
         # Автоматическое обновление атрибутов класса
         Category.category_count += 1
-        Category.product_count += len(products)  # Учитывает только количество объектов, без их quantity
+        Category.product_count += len(products)
+
+    def add_product(self, product):
+        """
+        Метод для добавления продукта в категорию с проверкой типа.
+        """
+        if not isinstance(product, Product):
+            print("Ошибка: добавляемый объект должен быть экземпляром класса Product или его наследником.")
+            return
+        self.__products.append(product)
+        Category.product_count += 1
+
+    @property
+    def products(self):
+        """
+        Геттер для получения списка продуктов в виде объектов
+        :return:
+        """
+        return self.__products
+
+    def formatted_products(self):
+        """
+        Геттер для получения списка продуктов в формате строки.
+        """
+        return "".join(
+            [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n" for product in self.__products]
+        )
 
 
 def main():
@@ -40,8 +89,7 @@ def main():
     # Вывод информации о категориях и продуктах
     for category in categories:
         print(f"Категория: {category.name}, Описание: {category.description}")
-        for product in category.products:
-            print(f"  - {product.name}: {product.description} ({product.price} руб, {product.quantity} шт)")
+        print(category.formatted_products())  # Используем геттер для вывода товаров
 
 
 if __name__ == "__main__":

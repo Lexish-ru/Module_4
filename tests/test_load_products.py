@@ -19,7 +19,7 @@ class TestLoadProducts(unittest.TestCase):
                 "description": "Смартфоны для удобства жизни",
                 "products": [
                     {
-                        "name": "Samsung Galaxy C23 Ultra",
+                        "name": "Samsung Galaxy S23 Ultra",
                         "description": "256GB, Серый цвет, 200MP камера",
                         "price": 180000.0,
                         "quantity": 5,
@@ -39,7 +39,7 @@ class TestLoadProducts(unittest.TestCase):
                     "description": "Смартфоны для удобства жизни",
                     "products": [
                         {
-                            "name": "Samsung Galaxy C23 Ultra",
+                            "name": "Samsung Galaxy S23 Ultra",
                             "description": "256GB, Серый цвет, 200MP камера",
                             "price": 180000.0,
                             "quantity": 5,
@@ -63,7 +63,7 @@ class TestLoadProducts(unittest.TestCase):
         product1 = category.products[0]
         product2 = category.products[1]
 
-        self.assertEqual(product1.name, "Samsung Galaxy C23 Ultra")
+        self.assertEqual(product1.name, "Samsung Galaxy S23 Ultra")
         self.assertEqual(product2.name, "iPhone 15")
 
     @patch("os.path.isfile", return_value=False)
