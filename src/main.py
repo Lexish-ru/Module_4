@@ -71,7 +71,6 @@ class Category:
         """
         return iter(self.__products)
 
-
     def add_product(self, product):
         """
         Метод для добавления продукта в категорию с проверкой типа.

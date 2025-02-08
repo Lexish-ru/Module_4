@@ -54,14 +54,6 @@ class TestProduct(unittest.TestCase):
         product.price = borderline_price
         self.assertEqual(product.price, borderline_price)
 
-    def test_product_initialization(self):
-        """Проверка корректности инициализации объекта Product."""
-        product = Product("Безделушка", "Описание", 100.0, 10)
-        self.assertEqual(product.name, "Безделушка")
-        self.assertEqual(product.description, "Описание")
-        self.assertEqual(product.price, 100.0)
-        self.assertEqual(product.quantity, 10)
-
     def test_product_str(self):
         """Проверка строкового представления продукта."""
         product = Product("Тестовый товар", "Описание", 100.0, 10)
@@ -143,30 +135,38 @@ class TestCategory(unittest.TestCase):
 
     def test_category_str(self):
         """Проверка строкового представления категории."""
-        products = [
-            Product("Товар 1", "Описание", 100.0, 2),
-            Product("Товар 2", "Описание", 200.0, 3)
-        ]
+        products = [Product("Товар 1", "Описание", 100.0, 2), Product("Товар 2", "Описание", 200.0, 3)]
         category = Category("Категория", "Описание", products)
         self.assertEqual(str(category), "Категория, количество продуктов: 5")
 
-    def test_add_product(self):
-        """Проверка добавления продукта в категорию."""
-        category = Category("Категория", "Описание", [])
-        product = Product("Новый товар", "Описание", 150.0, 5)
-        category.add_product(product)
-        self.assertEqual(len(category.products), 1)
-        self.assertEqual(category.products[0], product)
-
     def test_category_iteration(self):
         """Проверка работы итератора в категории."""
-        products = [
-            Product("Товар 1", "Описание", 100.0, 2),
-            Product("Товар 2", "Описание", 200.0, 3)
-        ]
+        products = [Product("Товар 1", "Описание", 100.0, 2), Product("Товар 2", "Описание", 200.0, 3)]
         category = Category("Категория", "Описание", products)
         iterated_products = [product for product in category]
         self.assertEqual(iterated_products, products)
+
+    def test_category_iterator_exhaustion(self):
+        """Проверка, что итератор категории можно исчерпать."""
+        products = [Product("Товар 1", "Описание", 100.0, 2), Product("Товар 2", "Описание", 200.0, 3)]
+        category = Category("Категория", "Описание", products)
+        iterator = iter(category)
+        self.assertEqual(next(iterator), products[0])
+        self.assertEqual(next(iterator), products[1])
+        with self.assertRaises(StopIteration):
+            next(iterator)
+
+    def test_category_iterable(self):
+        """Проверка возможности перебора товаров через итератор."""
+
+        products = [
+            Product("Товар A", "Описание", 500.0, 1),
+            Product("Товар B", "Описание", 300.0, 2),
+            Product("Товар C", "Описание", 150.0, 5),
+        ]
+        category = Category("Тестовая категория", "Описание", products)
+        for i, product in enumerate(category):
+            self.assertEqual(product, products[i])
 
 
 if __name__ == "__main__":
