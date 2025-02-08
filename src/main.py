@@ -11,6 +11,9 @@ class Product:
         self.__price = price  # Приватный атрибут цены
         self.quantity = quantity
 
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
     @classmethod
     def new_product(cls, product_info: dict):
         """
@@ -52,6 +55,10 @@ class Category:
         # Автоматическое обновление атрибутов класса
         Category.category_count += 1
         Category.product_count += len(products)
+
+    def __str__(self):
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity}"
 
     def add_product(self, product):
         """
