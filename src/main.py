@@ -77,13 +77,22 @@ class LawnGrass(Product):
         )
 
 
-class Category:
+class AbstractEntity(ABC):
+    def __init__(self, name: str, description: str):
+        self.name = name
+        self.description = description
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+
+class Category(AbstractEntity):
     category_count = 0
     product_count = 0
 
     def __init__(self, name: str, description: str, products: List[Product]):
-        self.name = name
-        self.description = description
+        super().__init__(name, description)
         self.products = products
         Category.category_count += 1
         Category.product_count += len(products)
@@ -102,21 +111,25 @@ class Category:
         return iter(self.products)
 
     def formatted_products(self):
-        """
-        Геттер для получения списка продуктов в формате строки.
-        """
-        return "\n".join(str(product) for product in self.products)
+        return "\\n".join(str(product) for product in self.products)
+
+
+class Order(AbstractEntity):
+    def __init__(self, product: Product, quantity: int):
+        super().__init__(product.name, f"Заказ на {quantity} шт.")
+        self.product = product
+        self.quantity = quantity
+        self.total_price = product.price * quantity
+
+    def __str__(self):
+        return f"Заказ: {self.product.name}, Количество: {self.quantity}, Итоговая стоимость: {self.total_price} руб."
 
 
 def main():
-    """
-    Главная функция программы. Загружает категории и товары из JSON-файла и выводит их на экран.
-    """
-    categories = load_categories_from_json("data/products.json")  # Просто загружаем категории
-
+    categories = load_categories_from_json("data/products.json")
     for category in categories:
         print(f"Категория: {category.name}, Описание: {category.description}")
-        print(category.formatted_products())  # Выводим товары
+        print(category.formatted_products())
 
 
 if __name__ == "__main__":
