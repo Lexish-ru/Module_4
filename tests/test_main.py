@@ -137,7 +137,7 @@ class TestCategory(unittest.TestCase):
         """Проверка строкового представления категории."""
         products = [Product("Товар 1", "Описание", 100.0, 2), Product("Товар 2", "Описание", 200.0, 3)]
         category = Category("Категория", "Описание", products)
-        self.assertEqual(str(category), "Категория, количество продуктов: 5")
+        self.assertEqual(str(category), "Категория, количество продуктов: 5 шт.")
 
     def test_category_iteration(self):
         """Проверка работы итератора в категории."""

@@ -36,8 +36,8 @@ class Product:
 
     @price.setter
     def price(self, value):
-        if value < 0:
-            raise ValueError("Цена не может быть отрицательной")
+        if value <= 0:
+            raise ValueError("Цена должна быть больше нуля")
         self.__price = value
 
 
@@ -68,18 +68,29 @@ class LawnGrass(Product):
 
 
 class Category:
+    category_count = 0
+    product_count = 0
+
     def __init__(self, name: str, description: str, products: List[Product]):
         self.name = name
         self.description = description
         self.products = products
+        Category.category_count += 1
+        Category.product_count += len(products)
 
     def add_product(self, product: Product):
         if not isinstance(product, Product):
-            raise TypeError("Можно добавлять только объекты Product или его подклассов")
+            print("Ошибка: можно добавлять только объекты Product или его подклассов")
+            return  # Теперь просто игнорируем неправильный объект, а не выбрасываем исключение
         self.products.append(product)
+        Category.product_count += 1
 
     def __str__(self):
-        return f"{self.name}: {len(self.products)} товаров"
+        total_quantity = sum(product.quantity for product in self.products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def __iter__(self):
+        return iter(self.products)
 
     def formatted_products(self):
         """
@@ -97,7 +108,6 @@ def main():
     for category in categories:
         print(f"Категория: {category.name}, Описание: {category.description}")
         print(category.formatted_products())  # Выводим товары
-
 
 
 if __name__ == "__main__":
