@@ -1,113 +1,103 @@
+from typing import List
 from src.load_products import load_categories_from_json
-
 
 class Product:
     def __init__(self, name: str, description: str, price: float, quantity: int):
         """
-        Класс Product представляет товар с его характеристиками.
+        Базовый класс для всех продуктов.
         """
         self.name = name
         self.description = description
-        self.__price = price  # Приватный атрибут цены
+        self.__price = price
         self.quantity = quantity
 
     def __str__(self):
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other):
-        if not isinstance(other, Product):
-            return NotImplemented
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать товары разных типов")
         return self.price * self.quantity + other.price * other.quantity
 
     @classmethod
     def new_product(cls, product_info: dict):
         """
-        Класс-метод для создания нового продукта из словаря.
+        Создание нового продукта из словаря.
         """
+        if 'efficiency' in product_info:
+            return Smartphone(**product_info)
+        elif 'country' in product_info:
+            return LawnGrass(**product_info)
         return cls(**product_info)
 
     @property
     def price(self):
-        """
-        Геттер для получения цены товара.
-        """
         return self.__price
 
     @price.setter
-    def price(self, new_price: float):
-        """
-        Сеттер для установки новой цены товара с проверкой валидности.
-        """
-        if new_price > 0:
-            self.__price = new_price
-        else:
-            raise ValueError("Цена должна быть больше нуля.")
+    def price(self, value):
+        if value < 0:
+            raise ValueError("Цена не может быть отрицательной")
+        self.__price = value
+
+
+class Smartphone(Product):
+    def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
+
+    def __str__(self):
+        return (f"{self.name} ({self.model}), {self.memory}GB, {self.color}, "
+                f"{self.price} руб. Остаток: {self.quantity} шт.")
+
+
+class LawnGrass(Product):
+    def __init__(self, name, description, price, quantity, country, germination_period, color):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
+
+    def __str__(self):
+        return (f"{self.name}, {self.country}, {self.color}, "
+                f"срок прорастания: {self.germination_period}, "
+                f"{self.price} руб. Остаток: {self.quantity} шт.")
 
 
 class Category:
-    # Атрибуты класса
-    category_count = 0  # Общее количество категорий
-    product_count = 0  # Общее количество товаров во всех категориях
-
-    def __init__(self, name: str, description: str, products: list):
-        """
-        Класс Category представляет категорию товаров.
-        """
+    def __init__(self, name: str, description: str, products: List[Product]):
         self.name = name
         self.description = description
-        self.__products = products  # Приватный атрибут списка товаров
+        self.products = products
 
-        # Автоматическое обновление атрибутов класса
-        Category.category_count += 1
-        Category.product_count += len(products)
+    def add_product(self, product: Product):
+        if not isinstance(product, Product):
+            raise TypeError("Можно добавлять только объекты Product или его подклассов")
+        self.products.append(product)
 
     def __str__(self):
-        total_quantity = sum(product.quantity for product in self.__products)
-        return f"{self.name}, количество продуктов: {total_quantity}"
-
-    def __iter__(self):
-        """
-        Итератор для перебора продуктов в категории.
-        """
-        return iter(self.__products)
-
-    def add_product(self, product):
-        """
-        Метод для добавления продукта в категорию с проверкой типа.
-        """
-        if not isinstance(product, Product):
-            print("Ошибка: добавляемый объект должен быть экземпляром класса Product или его наследником.")
-            return
-        self.__products.append(product)
-        Category.product_count += 1
-
-    @property
-    def products(self):
-        """
-        Геттер для получения списка продуктов в виде объектов
-        :return:
-        """
-        return self.__products
+        return f"{self.name}: {len(self.products)} товаров"
 
     def formatted_products(self):
         """
         Геттер для получения списка продуктов в формате строки.
         """
-        return "".join(
-            [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n" for product in self.__products]
-        )
+        return "\n".join(str(product) for product in self.products)
 
 
 def main():
     """
     Главная функция программы. Загружает категории и товары из JSON-файла и выводит их на экран.
     """
-    categories = load_categories_from_json("products.json")
+    categories = load_categories_from_json("data/products.json")  # Просто загружаем категории
 
-    # Вывод информации о категориях и продуктах
     for category in categories:
         print(f"Категория: {category.name}, Описание: {category.description}")
-        print(category.formatted_products())  # Используем геттер для вывода товаров
+        print(category.formatted_products())  # Выводим товары
+
 
 
 if __name__ == "__main__":

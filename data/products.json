@@ -34,5 +34,29 @@
         "quantity": 7
       }
     ]
+  },
+  {
+    "name": "Трава газонная",
+    "description": "Газонная трава для сада, парка и спортивных полей",
+    "products": [
+      {
+        "name": "GreenField Universal",
+        "description": "Смесь газонных трав для универсального использования",
+        "price": 1500.0,
+        "quantity": 20,
+        "country": "Нидерланды",
+        "germination_period": "2 недели",
+        "color": "Зелёный"
+      },
+      {
+        "name": "Premium LawnMix",
+        "description": "Премиальная трава для декоративных газонов",
+        "price": 2500.0,
+        "quantity": 15,
+        "country": "Германия",
+        "germination_period": "3 недели",
+        "color": "Изумрудный"
+      }
+    ]
   }
 ]
