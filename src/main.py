@@ -1,36 +1,17 @@
 from typing import List
-
+from abc import ABC, abstractmethod
 from src.load_products import load_categories_from_json
 
-
-class Product:
+class BaseProduct(ABC):
     def __init__(self, name: str, description: str, price: float, quantity: int):
-        """
-        Базовый класс для всех продуктов.
-        """
         self.name = name
         self.description = description
         self.__price = price
         self.quantity = quantity
 
+    @abstractmethod
     def __str__(self):
-        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
-
-    def __add__(self, other):
-        if type(self) is not type(other):
-            raise TypeError("Нельзя складывать товары разных типов")
-        return self.price * self.quantity + other.price * other.quantity
-
-    @classmethod
-    def new_product(cls, product_info: dict):
-        """
-        Создание нового продукта из словаря.
-        """
-        if "efficiency" in product_info:
-            return Smartphone(**product_info)
-        elif "country" in product_info:
-            return LawnGrass(**product_info)
-        return cls(**product_info)
+        pass
 
     @property
     def price(self):
@@ -42,6 +23,23 @@ class Product:
             raise ValueError("Цена должна быть больше нуля")
         self.__price = value
 
+
+class Product(BaseProduct):
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать товары разных типов")
+        return self.price * self.quantity + other.price * other.quantity
+
+    @classmethod
+    def new_product(cls, product_info: dict):
+        if "efficiency" in product_info:
+            return Smartphone(**product_info)
+        elif "country" in product_info:
+            return LawnGrass(**product_info)
+        return cls(**product_info)
 
 class Smartphone(Product):
     def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
