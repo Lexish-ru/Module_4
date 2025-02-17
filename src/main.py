@@ -24,7 +24,13 @@ class BaseProduct(ABC):
         self.__price = value
 
 
-class Product(BaseProduct):
+class ProductLoggerMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(f"Создан объект: {self.__class__.__name__} с параметрами {self.__dict__}")
+
+
+class Product(ProductLoggerMixin, BaseProduct):
     def __str__(self):
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
