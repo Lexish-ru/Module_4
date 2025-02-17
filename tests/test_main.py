@@ -2,12 +2,10 @@ import io
 import os
 import sys
 import unittest
-from unicodedata import category
 
 import pytest
-from openpyxl.compat.product import product
 
-from src.main import BaseProduct, Category, LawnGrass, Order, Product, Smartphone, OrderException
+from src.main import BaseProduct, Category, LawnGrass, Order, OrderException, Product, Smartphone
 
 # Добавляем путь к src в sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
@@ -226,6 +224,7 @@ class TestCategory(unittest.TestCase):
         product = Product("Единственный товар", "Описание", 500, 1)
         category = Category("Категория с одним товаром", "Описание", [product])
         self.assertEqual(category.middle_price(), 500)
+
 
 class TestProductMethods(unittest.TestCase):
     def test_smartphone_str(self):

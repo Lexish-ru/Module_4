@@ -133,8 +133,10 @@ class Category(AbstractEntity):
         except ZeroDivisionError:
             return 0  # Защита от деления на 0 (на случай ошибок)
 
+
 class OrderException(Exception):
     """Класс исключения для ошибок при добавлении товаров в заказ."""
+
     def __init__(self, message="Ошибка при добавлении товара в заказ."):
         super().__init__(message)
 
@@ -143,7 +145,8 @@ class Order(AbstractEntity):
     def __init__(self, product: Product, quantity: int):
         if quantity <= 0:
             raise OrderException(
-                "Нельзя добавить в заказ товар с нулевым количеством.")  # Теперь выбрасываем исключение
+                "Нельзя добавить в заказ товар с нулевым количеством."
+            )  # Теперь выбрасываем исключение
 
         super().__init__(product.name, f"Заказ на {quantity} шт.")
         self.product = product
@@ -161,12 +164,14 @@ def main():
         print(category.formatted_products())
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         product_invalid = Product("Бракованный товар", "Неверное количество", 1000.0, 0)
     except ValueError as e:
+        _ = e
         print(
-            "Возникла ошибка ValueError прерывающая работу программы при попытке добавить продукт с нулевым количеством")
+         "Возникла ошибка ValueError прерывающая работу программы при попытке добавить продукт с нулевым количеством"
+        )
     else:
         print("Не возникла ошибка ValueError при попытке добавить продукт с нулевым количеством")
 
@@ -174,4 +179,3 @@ if __name__ == '__main__':
 
     for category in categories:
         print(f"Категория: {category.name}, Средняя цена: {category.middle_price()}")
-
