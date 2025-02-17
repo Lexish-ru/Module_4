@@ -99,8 +99,8 @@ class TestCategory(unittest.TestCase):
     def test_add_invalid_product(self):
         """Проверка добавления некорректного объекта в категорию."""
         category = Category("Категория", "Описание категории", [self.product1])
-        category.add_product("Некорректный объект")  # Попытка добавить строку вместо объекта Product
-        self.assertEqual(len(category.products), 1)  # Количество продуктов не должно измениться
+        with self.assertRaises(TypeError, msg="Можно добавлять только объекты Product или его подклассов"):
+            category.add_product("Некорректный объект")  # Ожидаем, что выбросится TypeError
 
     def test_category_and_product_counts(self):
         """Проверка подсчёта категорий и продуктов."""
