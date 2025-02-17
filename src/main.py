@@ -132,7 +132,7 @@ class Category(AbstractEntity):
             return round(total_price / total_quantity, 2) if total_quantity > 0 else 0
         except ZeroDivisionError:
             return 0  # Защита от деления на 0 (на случай ошибок)
-        
+
 class OrderException(Exception):
     """Класс исключений для ошибок при добавлении товаров в заказ."""
     def __init__(self, message="Ошибка при добавлении товара в заказ."):
@@ -174,13 +174,8 @@ if __name__ == '__main__':
     else:
         print("Не возникла ошибка ValueError при попытке добавить продукт с нулевым количеством")
 
-    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
-    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
-    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+    categories = load_categories_from_json("products.json")  # Загружаем категории из JSON
 
-    category1 = Category("Смартфоны", "Категория смартфонов", [product1, product2, product3])
+    for category in categories:
+        print(f"Категория: {category.name}, Средняя цена: {category.middle_price()}")
 
-    print(category1.middle_price())
-
-    category_empty = Category("Пустая категория", "Категория без продуктов", [])
-    print(category_empty.middle_price())
