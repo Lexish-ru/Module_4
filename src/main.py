@@ -125,20 +125,34 @@ class Category(AbstractEntity):
         try:
             if not self.products:
                 return 0  # Если в категории нет товаров, возвращаем 0
-            total_price = sum(product.price for product in self.products)
-            return total_price / len(self.products)
+
+            total_price = sum(product.price * product.quantity for product in self.products)
+            total_quantity = sum(product.quantity for product in self.products)
+
+            return round(total_price / total_quantity, 2) if total_quantity > 0 else 0
         except ZeroDivisionError:
-            return 0  # Дополнительная защита от деления на 0
+            return 0  # Защита от деления на 0 (на случай ошибок)
+        
+class OrderException(Exception):
+    """Класс исключений для ошибок при добавлении товаров в заказ."""
+    def __init__(self, message="Ошибка при добавлении товара в заказ."):
+        super().__init__(message)
 
 
 class Order(AbstractEntity):
     def __init__(self, product: Product, quantity: int):
+        try:
+            if quantity <= 0:
+                raise OrderException("Нельзя добавить в заказ товар с нулевым количеством.")
+        except OrderException as e:
+            print(f"Ошибка: {e}")
+            return  # Прерываем создание заказа
+
         super().__init__(product.name, f"Заказ на {quantity} шт.")
-        if quantity < 0:
-            raise ValueError("Количество товаров в заказе не может быть отрицательным.")
         self.product = product
         self.quantity = quantity
         self.total_price = product.price * quantity
+        print(f"Товар {self.product.name} добавлен в заказ. Количество: {self.quantity}. Итоговая стоимость: {self.total_price} руб.")
 
     def __str__(self):
         return f"Заказ: {self.product.name}, Количество: {self.quantity}, Итоговая стоимость: {self.total_price} руб."
@@ -151,5 +165,22 @@ def main():
         print(category.formatted_products())
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    try:
+        product_invalid = Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+    except ValueError as e:
+        print(
+            "Возникла ошибка ValueError прерывающая работу программы при попытке добавить продукт с нулевым количеством")
+    else:
+        print("Не возникла ошибка ValueError при попытке добавить продукт с нулевым количеством")
+
+    product1 = Product("Samsung Galaxy S23 Ultra", "256GB, Серый цвет, 200MP камера", 180000.0, 5)
+    product2 = Product("Iphone 15", "512GB, Gray space", 210000.0, 8)
+    product3 = Product("Xiaomi Redmi Note 11", "1024GB, Синий", 31000.0, 14)
+
+    category1 = Category("Смартфоны", "Категория смартфонов", [product1, product2, product3])
+
+    print(category1.middle_price())
+
+    category_empty = Category("Пустая категория", "Категория без продуктов", [])
+    print(category_empty.middle_price())
