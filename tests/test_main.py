@@ -79,6 +79,16 @@ class TestProduct(unittest.TestCase):
         assert "Создан объект: Smartphone" in captured_output.getvalue()
         assert "'name': 'iPhone 15'" in captured_output.getvalue()
 
+    def test_product_quantity_zero(self):
+        """Проверка, что при создании товара с нулевым количеством выбрасывается ValueError"""
+        with self.assertRaises(ValueError, msg="Товар с нулевым количеством не может быть добавлен."):
+            Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+
+    def test_product_negative_quantity(self):
+        """Проверка, что при создании товара с отрицательным количеством выбрасывается ValueError"""
+        with self.assertRaises(ValueError, msg="Товар с нулевым количеством не может быть добавлен."):
+            Product("Бракованный товар", "Неверное количество", 1000.0, -5)
+
 
 class TestBaseProduct(unittest.TestCase):
     """Тесты для абстрактного класса BaseProduct."""
