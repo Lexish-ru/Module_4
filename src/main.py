@@ -33,6 +33,11 @@ class ProductLoggerMixin:
 
 
 class Product(ProductLoggerMixin, BaseProduct):
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        if quantity <= 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
+        super().__init__(name, description, price, quantity)
+
     def __str__(self):
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
