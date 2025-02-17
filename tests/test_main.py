@@ -5,7 +5,7 @@ import unittest
 
 import pytest
 
-from src.main import BaseProduct, Category, LawnGrass, Order, Product, Smartphone
+from src.main import BaseProduct, Category, LawnGrass, Order, Product, Smartphone, OrderException
 
 # Добавляем путь к src в sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
@@ -234,15 +234,16 @@ class TestOrder(unittest.TestCase):
         self.assertEqual(str(order), "Заказ: iPhone 15, Количество: 2, Итоговая стоимость: 420000.0 руб.")
 
     def test_order_with_zero_quantity(self):
-        """Проверка создания заказа с нулевым количеством (должен быть 0 руб.)."""
+        """Проверка, что при заказе с нулевым количеством выбрасывается исключение."""
         phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
-        order = Order(phone, 0)
-        self.assertEqual(order.total_price, 0.0)
+
+        with self.assertRaises(OrderException):  # Ожидаем OrderException
+            Order(phone, 0)
 
     def test_order_with_negative_quantity(self):
         """Проверка ошибки при создании заказа с отрицательным количеством."""
         phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(OrderException):  # Исправляем тест, ожидаем OrderException
             Order(phone, -1)
 
 

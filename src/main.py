@@ -134,25 +134,21 @@ class Category(AbstractEntity):
             return 0  # Защита от деления на 0 (на случай ошибок)
 
 class OrderException(Exception):
-    """Класс исключений для ошибок при добавлении товаров в заказ."""
+    """Класс исключения для ошибок при добавлении товаров в заказ."""
     def __init__(self, message="Ошибка при добавлении товара в заказ."):
         super().__init__(message)
 
 
 class Order(AbstractEntity):
     def __init__(self, product: Product, quantity: int):
-        try:
-            if quantity <= 0:
-                raise OrderException("Нельзя добавить в заказ товар с нулевым количеством.")
-        except OrderException as e:
-            print(f"Ошибка: {e}")
-            return  # Прерываем создание заказа
+        if quantity <= 0:
+            raise OrderException(
+                "Нельзя добавить в заказ товар с нулевым количеством.")  # Теперь выбрасываем исключение
 
         super().__init__(product.name, f"Заказ на {quantity} шт.")
         self.product = product
         self.quantity = quantity
         self.total_price = product.price * quantity
-        print(f"Товар {self.product.name} добавлен в заказ. Количество: {self.quantity}. Итоговая стоимость: {self.total_price} руб.")
 
     def __str__(self):
         return f"Заказ: {self.product.name}, Количество: {self.quantity}, Итоговая стоимость: {self.total_price} руб."
