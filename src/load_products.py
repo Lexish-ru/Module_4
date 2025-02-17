@@ -26,8 +26,9 @@ def load_categories_from_json(file_name: str = "products.json", max_attempts: in
 
         categories = []
         for cat in data:
-            category = Category(cat["name"], cat["description"],
-                                [Product.new_product(prod) for prod in cat["products"]])
+            category = Category(
+                cat["name"], cat["description"], [Product.new_product(prod) for prod in cat["products"]]
+            )
             categories.append(category)
         return categories  # Теперь возвращается список объектов Category
 

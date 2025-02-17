@@ -1,5 +1,7 @@
 from typing import List
+
 from src.load_products import load_categories_from_json
+
 
 class Product:
     def __init__(self, name: str, description: str, price: float, quantity: int):
@@ -24,9 +26,9 @@ class Product:
         """
         Создание нового продукта из словаря.
         """
-        if 'efficiency' in product_info:
+        if "efficiency" in product_info:
             return Smartphone(**product_info)
-        elif 'country' in product_info:
+        elif "country" in product_info:
             return LawnGrass(**product_info)
         return cls(**product_info)
 
@@ -50,8 +52,10 @@ class Smartphone(Product):
         self.color = color
 
     def __str__(self):
-        return (f"{self.name} ({self.model}), {self.memory}GB, {self.color}, "
-                f"{self.price} руб. Остаток: {self.quantity} шт.")
+        return (
+            f"{self.name} ({self.model}), {self.memory}GB, {self.color}, "
+            f"{self.price} руб. Остаток: {self.quantity} шт."
+        )
 
 
 class LawnGrass(Product):
@@ -62,9 +66,11 @@ class LawnGrass(Product):
         self.color = color
 
     def __str__(self):
-        return (f"{self.name}, {self.country}, {self.color}, "
-                f"срок прорастания: {self.germination_period}, "
-                f"{self.price} руб. Остаток: {self.quantity} шт.")
+        return (
+            f"{self.name}, {self.country}, {self.color}, "
+            f"срок прорастания: {self.germination_period}, "
+            f"{self.price} руб. Остаток: {self.quantity} шт."
+        )
 
 
 class Category:

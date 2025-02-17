@@ -1,8 +1,9 @@
-import unittest
 import json
+import unittest
 from unittest.mock import mock_open, patch
+
 from src.load_products import load_categories_from_json
-from src.main import Category, Smartphone, LawnGrass
+from src.main import LawnGrass, Smartphone
 
 
 class TestLoadProducts(unittest.TestCase):

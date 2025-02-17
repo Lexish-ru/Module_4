@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 
-from src.main import Category, Product, Smartphone, LawnGrass
+from src.main import Category, LawnGrass, Product, Smartphone
 
 # Добавляем путь к src в sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
@@ -167,6 +167,7 @@ class TestCategory(unittest.TestCase):
         category = Category("Тестовая категория", "Описание", products)
         for i, product in enumerate(category):
             self.assertEqual(product, products[i])
+
 
 class TestProductMethods(unittest.TestCase):
     def test_smartphone_str(self):
