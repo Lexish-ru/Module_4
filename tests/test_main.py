@@ -214,6 +214,10 @@ class TestCategory(unittest.TestCase):
         expected_price = round((100 * 2 + 200 * 3) / (2 + 3), 2)  # (200 + 600) / 5 = 160.0
         self.assertEqual(category.middle_price(), expected_price)
 
+    def test_category_middle_price_empty(self):
+        """Проверка, что для пустой категории средняя цена равна 0"""
+        category = Category("Пустая категория", "Описание", [])
+        self.assertEqual(category.middle_price(), 0)
 
 
 class TestProductMethods(unittest.TestCase):
