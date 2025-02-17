@@ -1,6 +1,8 @@
-from typing import List
 from abc import ABC, abstractmethod
+from typing import List
+
 from src.load_products import load_categories_from_json
+
 
 class BaseProduct(ABC):
     def __init__(self, name: str, description: str, price: float, quantity: int):
@@ -46,6 +48,7 @@ class Product(ProductLoggerMixin, BaseProduct):
         elif "country" in product_info:
             return LawnGrass(**product_info)
         return cls(**product_info)
+
 
 class Smartphone(Product):
     def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
@@ -117,6 +120,8 @@ class Category(AbstractEntity):
 class Order(AbstractEntity):
     def __init__(self, product: Product, quantity: int):
         super().__init__(product.name, f"Заказ на {quantity} шт.")
+        if quantity < 0:
+            raise ValueError("Количество товаров в заказе не может быть отрицательным.")
         self.product = product
         self.quantity = quantity
         self.total_price = product.price * quantity
