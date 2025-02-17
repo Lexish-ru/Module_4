@@ -2,8 +2,10 @@ import io
 import os
 import sys
 import unittest
+from unicodedata import category
 
 import pytest
+from openpyxl.compat.product import product
 
 from src.main import BaseProduct, Category, LawnGrass, Order, Product, Smartphone, OrderException
 
@@ -219,6 +221,11 @@ class TestCategory(unittest.TestCase):
         category = Category("Пустая категория", "Описание", [])
         self.assertEqual(category.middle_price(), 0)
 
+    def test_category_middle_price_one_product(self):
+        """Проверка, что если в категории один товар, его цена = средней цене"""
+        product = Product("Единственный товар", "Описание", 500, 1)
+        category = Category("Категория с одним товаром", "Описание", [product])
+        self.assertEqual(category.middle_price(), 500)
 
 class TestProductMethods(unittest.TestCase):
     def test_smartphone_str(self):
