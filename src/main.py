@@ -86,8 +86,7 @@ class Category:
 
     def add_product(self, product: Product):
         if not isinstance(product, Product):
-            print("Ошибка: можно добавлять только объекты Product или его подклассов")
-            return  # Теперь просто игнорируем неправильный объект, а не выбрасываем исключение
+            raise TypeError("Можно добавлять только объекты Product или его подклассов")
         self.products.append(product)
         Category.product_count += 1
 
