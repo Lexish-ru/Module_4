@@ -119,7 +119,16 @@ class Category(AbstractEntity):
         return iter(self.products)
 
     def formatted_products(self):
-        return "\\n".join(str(product) for product in self.products)
+        return "\n".join(str(product) for product in self.products)
+
+    def middle_price(self):
+        try:
+            if not self.products:
+                return 0  # Если в категории нет товаров, возвращаем 0
+            total_price = sum(product.price for product in self.products)
+            return total_price / len(self.products)
+        except ZeroDivisionError:
+            return 0  # Дополнительная защита от деления на 0
 
 
 class Order(AbstractEntity):
