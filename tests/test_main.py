@@ -205,6 +205,16 @@ class TestCategory(unittest.TestCase):
         for i, product in enumerate(category):
             self.assertEqual(product, products[i])
 
+    def test_category_middle_price(self):
+        """Проверка расчёта средней цены товаров в категории"""
+        product1 = Product("Товар 1", "Описание", 100, 2)  # 100 * 2
+        product2 = Product("Товар 2", "Описание", 200, 3)  # 200 * 3
+        category = Category("Тестовая категория", "Описание", [product1, product2])
+
+        expected_price = round((100 * 2 + 200 * 3) / (2 + 3), 2)  # (200 + 600) / 5 = 160.0
+        self.assertEqual(category.middle_price(), expected_price)
+
+
 
 class TestProductMethods(unittest.TestCase):
     def test_smartphone_str(self):
