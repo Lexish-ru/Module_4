@@ -181,6 +181,18 @@ class TestProductMethods(unittest.TestCase):
         expected_str = "GreenField, Нидерланды, Зелёный, срок прорастания: 2 недели, 1500.0 руб. Остаток: 20 шт."
         self.assertEqual(str(grass), expected_str)
 
+    def test_product_addition_same_type(self):
+        """Проверка сложения товаров одного типа."""
+        phone1 = Smartphone("iPhone 15", "512GB", 200000, 5, "A16", "Pro", 512, "Gray")
+        phone2 = Smartphone("iPhone 15", "512GB", 200000, 3, "A16", "Pro", 512, "Gray")
+        self.assertEqual(phone1 + phone2, (200000 * 5 + 200000 * 3))
+
+    def test_product_addition_different_types(self):
+        """Проверка ошибки при сложении товаров разных типов."""
+        phone = Smartphone("iPhone 15", "512GB", 200000, 5, "A16", "Pro", 512, "Gray")
+        grass = LawnGrass("GreenField", "Газонная трава", 1500.0, 20, "Нидерланды", "2 недели", "Зелёный")
+        with self.assertRaises(TypeError):
+            _ = phone + grass
 
 
 if __name__ == "__main__":
