@@ -1,36 +1,19 @@
+from abc import ABC, abstractmethod
 from typing import List
 
 from src.load_products import load_categories_from_json
 
 
-class Product:
+class BaseProduct(ABC):
     def __init__(self, name: str, description: str, price: float, quantity: int):
-        """
-        Базовый класс для всех продуктов.
-        """
         self.name = name
         self.description = description
         self.__price = price
         self.quantity = quantity
 
+    @abstractmethod
     def __str__(self):
-        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
-
-    def __add__(self, other):
-        if type(self) is not type(other):
-            raise TypeError("Нельзя складывать товары разных типов")
-        return self.price * self.quantity + other.price * other.quantity
-
-    @classmethod
-    def new_product(cls, product_info: dict):
-        """
-        Создание нового продукта из словаря.
-        """
-        if "efficiency" in product_info:
-            return Smartphone(**product_info)
-        elif "country" in product_info:
-            return LawnGrass(**product_info)
-        return cls(**product_info)
+        pass
 
     @property
     def price(self):
@@ -41,6 +24,30 @@ class Product:
         if value <= 0:
             raise ValueError("Цена должна быть больше нуля")
         self.__price = value
+
+
+class ProductLoggerMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(f"Создан объект: {self.__class__.__name__} с параметрами {self.__dict__}")
+
+
+class Product(ProductLoggerMixin, BaseProduct):
+    def __str__(self):
+        return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
+
+    def __add__(self, other):
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать товары разных типов")
+        return self.price * self.quantity + other.price * other.quantity
+
+    @classmethod
+    def new_product(cls, product_info: dict):
+        if "efficiency" in product_info:
+            return Smartphone(**product_info)
+        elif "country" in product_info:
+            return LawnGrass(**product_info)
+        return cls(**product_info)
 
 
 class Smartphone(Product):
@@ -73,13 +80,22 @@ class LawnGrass(Product):
         )
 
 
-class Category:
+class AbstractEntity(ABC):
+    def __init__(self, name: str, description: str):
+        self.name = name
+        self.description = description
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+
+class Category(AbstractEntity):
     category_count = 0
     product_count = 0
 
     def __init__(self, name: str, description: str, products: List[Product]):
-        self.name = name
-        self.description = description
+        super().__init__(name, description)
         self.products = products
         Category.category_count += 1
         Category.product_count += len(products)
@@ -98,21 +114,27 @@ class Category:
         return iter(self.products)
 
     def formatted_products(self):
-        """
-        Геттер для получения списка продуктов в формате строки.
-        """
-        return "\n".join(str(product) for product in self.products)
+        return "\\n".join(str(product) for product in self.products)
+
+
+class Order(AbstractEntity):
+    def __init__(self, product: Product, quantity: int):
+        super().__init__(product.name, f"Заказ на {quantity} шт.")
+        if quantity < 0:
+            raise ValueError("Количество товаров в заказе не может быть отрицательным.")
+        self.product = product
+        self.quantity = quantity
+        self.total_price = product.price * quantity
+
+    def __str__(self):
+        return f"Заказ: {self.product.name}, Количество: {self.quantity}, Итоговая стоимость: {self.total_price} руб."
 
 
 def main():
-    """
-    Главная функция программы. Загружает категории и товары из JSON-файла и выводит их на экран.
-    """
-    categories = load_categories_from_json("data/products.json")  # Просто загружаем категории
-
+    categories = load_categories_from_json("data/products.json")
     for category in categories:
         print(f"Категория: {category.name}, Описание: {category.description}")
-        print(category.formatted_products())  # Выводим товары
+        print(category.formatted_products())
 
 
 if __name__ == "__main__":

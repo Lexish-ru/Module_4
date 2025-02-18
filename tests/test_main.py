@@ -1,8 +1,11 @@
+import io
 import os
 import sys
 import unittest
 
-from src.main import Category, LawnGrass, Product, Smartphone
+import pytest
+
+from src.main import BaseProduct, Category, LawnGrass, Order, Product, Smartphone
 
 # Добавляем путь к src в sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
@@ -65,6 +68,31 @@ class TestProduct(unittest.TestCase):
         product2 = Product("Товар 2", "Описание", 200.0, 3)
         self.assertEqual(product1 + product2, (100.0 * 2 + 200.0 * 3))
 
+    def test_product_logger_mixin(self):
+        """Проверяем, что при создании объекта выводится информация в консоль."""
+        captured_output = io.StringIO()  # Перехватываем вывод в консоль
+        sys.stdout = captured_output
+
+        phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
+        _ = phone
+        sys.stdout = sys.__stdout__  # Восстанавливаем стандартный вывод
+        assert "Создан объект: Smartphone" in captured_output.getvalue()
+        assert "'name': 'iPhone 15'" in captured_output.getvalue()
+
+
+class TestBaseProduct(unittest.TestCase):
+    """Тесты для абстрактного класса BaseProduct."""
+
+    def test_base_product_is_abstract(self):
+        """Проверяем, что нельзя создать экземпляр BaseProduct."""
+        with pytest.raises(TypeError):
+            BaseProduct("Тест", "Описание", 100.0, 10)
+
+    def test_product_inherits_base_product(self):
+        """Проверяем, что Product наследуется от BaseProduct."""
+        phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
+        assert isinstance(phone, BaseProduct)
+
 
 class TestCategory(unittest.TestCase):
     def setUp(self):
@@ -97,10 +125,9 @@ class TestCategory(unittest.TestCase):
         self.assertEqual(Category.product_count, 2)
 
     def test_add_invalid_product(self):
-        """Проверка добавления некорректного объекта в категорию."""
-        category = Category("Категория", "Описание категории", [self.product1])
-        with self.assertRaises(TypeError, msg="Можно добавлять только объекты Product или его подклассов"):
-            category.add_product("Некорректный объект")  # Ожидаем, что выбросится TypeError
+        category = Category("Электроника", "Тестовая категория", [])
+        with pytest.raises(TypeError, match="Можно добавлять только объекты Product или его подклассов"):
+            category.add_product("Некорректный объект")
 
     def test_category_and_product_counts(self):
         """Проверка подсчёта категорий и продуктов."""
@@ -194,6 +221,29 @@ class TestProductMethods(unittest.TestCase):
         grass = LawnGrass("GreenField", "Газонная трава", 1500.0, 20, "Нидерланды", "2 недели", "Зелёный")
         with self.assertRaises(TypeError):
             _ = phone + grass
+
+
+class TestOrder(unittest.TestCase):
+    def test_order_creation(self):
+        """Проверка создания заказа и расчета итоговой стоимости."""
+        phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
+        order = Order(phone, 2)
+        self.assertEqual(order.product, phone)
+        self.assertEqual(order.quantity, 2)
+        self.assertEqual(order.total_price, 420000.0)
+        self.assertEqual(str(order), "Заказ: iPhone 15, Количество: 2, Итоговая стоимость: 420000.0 руб.")
+
+    def test_order_with_zero_quantity(self):
+        """Проверка создания заказа с нулевым количеством (должен быть 0 руб.)."""
+        phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
+        order = Order(phone, 0)
+        self.assertEqual(order.total_price, 0.0)
+
+    def test_order_with_negative_quantity(self):
+        """Проверка ошибки при создании заказа с отрицательным количеством."""
+        phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
+        with self.assertRaises(ValueError):
+            Order(phone, -1)
 
 
 if __name__ == "__main__":
