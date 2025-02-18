@@ -1,114 +1,181 @@
+from abc import ABC, abstractmethod
+from typing import List
+
 from src.load_products import load_categories_from_json
 
 
-class Product:
+class BaseProduct(ABC):
     def __init__(self, name: str, description: str, price: float, quantity: int):
-        """
-        Класс Product представляет товар с его характеристиками.
-        """
         self.name = name
         self.description = description
-        self.__price = price  # Приватный атрибут цены
+        self.__price = price
         self.quantity = quantity
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+    @property
+    def price(self):
+        return self.__price
+
+    @price.setter
+    def price(self, value):
+        if value <= 0:
+            raise ValueError("Цена должна быть больше нуля")
+        self.__price = value
+
+
+class ProductLoggerMixin:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        print(f"Создан объект: {self.__class__.__name__} с параметрами {self.__dict__}")
+
+
+class Product(ProductLoggerMixin, BaseProduct):
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        if quantity <= 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
+        super().__init__(name, description, price, quantity)
 
     def __str__(self):
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
     def __add__(self, other):
-        if not isinstance(other, Product):
-            return NotImplemented
+        if type(self) is not type(other):
+            raise TypeError("Нельзя складывать товары разных типов")
         return self.price * self.quantity + other.price * other.quantity
 
     @classmethod
     def new_product(cls, product_info: dict):
-        """
-        Класс-метод для создания нового продукта из словаря.
-        """
+        if "efficiency" in product_info:
+            return Smartphone(**product_info)
+        elif "country" in product_info:
+            return LawnGrass(**product_info)
         return cls(**product_info)
 
-    @property
-    def price(self):
-        """
-        Геттер для получения цены товара.
-        """
-        return self.__price
 
-    @price.setter
-    def price(self, new_price: float):
-        """
-        Сеттер для установки новой цены товара с проверкой валидности.
-        """
-        if new_price > 0:
-            self.__price = new_price
-        else:
-            raise ValueError("Цена должна быть больше нуля.")
-
-
-class Category:
-    # Атрибуты класса
-    category_count = 0  # Общее количество категорий
-    product_count = 0  # Общее количество товаров во всех категориях
-
-    def __init__(self, name: str, description: str, products: list):
-        """
-        Класс Category представляет категорию товаров.
-        """
-        self.name = name
-        self.description = description
-        self.__products = products  # Приватный атрибут списка товаров
-
-        # Автоматическое обновление атрибутов класса
-        Category.category_count += 1
-        Category.product_count += len(products)
+class Smartphone(Product):
+    def __init__(self, name, description, price, quantity, efficiency, model, memory, color):
+        super().__init__(name, description, price, quantity)
+        self.efficiency = efficiency
+        self.model = model
+        self.memory = memory
+        self.color = color
 
     def __str__(self):
-        total_quantity = sum(product.quantity for product in self.__products)
-        return f"{self.name}, количество продуктов: {total_quantity}"
-
-    def __iter__(self):
-        """
-        Итератор для перебора продуктов в категории.
-        """
-        return iter(self.__products)
-
-    def add_product(self, product):
-        """
-        Метод для добавления продукта в категорию с проверкой типа.
-        """
-        if not isinstance(product, Product):
-            print("Ошибка: добавляемый объект должен быть экземпляром класса Product или его наследником.")
-            return
-        self.__products.append(product)
-        Category.product_count += 1
-
-    @property
-    def products(self):
-        """
-        Геттер для получения списка продуктов в виде объектов
-        :return:
-        """
-        return self.__products
-
-    def formatted_products(self):
-        """
-        Геттер для получения списка продуктов в формате строки.
-        """
-        return "".join(
-            [f"{product.name}, {product.price} руб. Остаток: {product.quantity} шт.\n" for product in self.__products]
+        return (
+            f"{self.name} ({self.model}), {self.memory}GB, {self.color}, "
+            f"{self.price} руб. Остаток: {self.quantity} шт."
         )
 
 
-def main():
-    """
-    Главная функция программы. Загружает категории и товары из JSON-файла и выводит их на экран.
-    """
-    categories = load_categories_from_json("products.json")
+class LawnGrass(Product):
+    def __init__(self, name, description, price, quantity, country, germination_period, color):
+        super().__init__(name, description, price, quantity)
+        self.country = country
+        self.germination_period = germination_period
+        self.color = color
 
-    # Вывод информации о категориях и продуктах
+    def __str__(self):
+        return (
+            f"{self.name}, {self.country}, {self.color}, "
+            f"срок прорастания: {self.germination_period}, "
+            f"{self.price} руб. Остаток: {self.quantity} шт."
+        )
+
+
+class AbstractEntity(ABC):
+    def __init__(self, name: str, description: str):
+        self.name = name
+        self.description = description
+
+    @abstractmethod
+    def __str__(self):
+        pass
+
+
+class Category(AbstractEntity):
+    category_count = 0
+    product_count = 0
+
+    def __init__(self, name: str, description: str, products: List[Product]):
+        super().__init__(name, description)
+        self.products = products
+        Category.category_count += 1
+        Category.product_count += len(products)
+
+    def add_product(self, product: Product):
+        if not isinstance(product, Product):
+            raise TypeError("Можно добавлять только объекты Product или его подклассов")
+        self.products.append(product)
+        Category.product_count += 1
+
+    def __str__(self):
+        total_quantity = sum(product.quantity for product in self.products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def __iter__(self):
+        return iter(self.products)
+
+    def formatted_products(self):
+        return "\n".join(str(product) for product in self.products)
+
+    def middle_price(self):
+        try:
+            if not self.products:
+                return 0  # Если в категории нет товаров, возвращаем 0
+
+            total_price = sum(product.price * product.quantity for product in self.products)
+            total_quantity = sum(product.quantity for product in self.products)
+
+            return round(total_price / total_quantity, 2) if total_quantity > 0 else 0
+        except ZeroDivisionError:
+            return 0  # Защита от деления на 0 (на случай ошибок)
+
+
+class OrderException(Exception):
+    """Класс исключения для ошибок при добавлении товаров в заказ."""
+
+    def __init__(self, message="Ошибка при добавлении товара в заказ."):
+        super().__init__(message)
+
+
+class Order(AbstractEntity):
+    def __init__(self, product: Product, quantity: int):
+        if quantity <= 0:
+            raise OrderException(
+                "Нельзя добавить в заказ товар с нулевым количеством."
+            )  # Теперь выбрасываем исключение
+
+        super().__init__(product.name, f"Заказ на {quantity} шт.")
+        self.product = product
+        self.quantity = quantity
+        self.total_price = product.price * quantity
+
+    def __str__(self):
+        return f"Заказ: {self.product.name}, Количество: {self.quantity}, Итоговая стоимость: {self.total_price} руб."
+
+
+def main():
+    categories = load_categories_from_json("data/products.json")
     for category in categories:
         print(f"Категория: {category.name}, Описание: {category.description}")
-        print(category.formatted_products())  # Используем геттер для вывода товаров
+        print(category.formatted_products())
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        product_invalid = Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+    except ValueError as e:
+        _ = e
+        print(
+         "Возникла ошибка ValueError прерывающая работу программы при попытке добавить продукт с нулевым количеством"
+        )
+    else:
+        print("Не возникла ошибка ValueError при попытке добавить продукт с нулевым количеством")
+
+    categories = load_categories_from_json("products.json")  # Загружаем категории из JSON
+
+    for category in categories:
+        print(f"Категория: {category.name}, Средняя цена: {category.middle_price()}")
