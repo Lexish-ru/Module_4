@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 
-from src.main import Category, Product
+from src.main import Category, LawnGrass, Product, Smartphone
 
 # Добавляем путь к src в sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
@@ -99,8 +99,8 @@ class TestCategory(unittest.TestCase):
     def test_add_invalid_product(self):
         """Проверка добавления некорректного объекта в категорию."""
         category = Category("Категория", "Описание категории", [self.product1])
-        category.add_product("Некорректный объект")  # Попытка добавить строку вместо объекта Product
-        self.assertEqual(len(category.products), 1)  # Количество продуктов не должно измениться
+        with self.assertRaises(TypeError, msg="Можно добавлять только объекты Product или его подклассов"):
+            category.add_product("Некорректный объект")  # Ожидаем, что выбросится TypeError
 
     def test_category_and_product_counts(self):
         """Проверка подсчёта категорий и продуктов."""
@@ -137,7 +137,7 @@ class TestCategory(unittest.TestCase):
         """Проверка строкового представления категории."""
         products = [Product("Товар 1", "Описание", 100.0, 2), Product("Товар 2", "Описание", 200.0, 3)]
         category = Category("Категория", "Описание", products)
-        self.assertEqual(str(category), "Категория, количество продуктов: 5")
+        self.assertEqual(str(category), "Категория, количество продуктов: 5 шт.")
 
     def test_category_iteration(self):
         """Проверка работы итератора в категории."""
@@ -167,6 +167,33 @@ class TestCategory(unittest.TestCase):
         category = Category("Тестовая категория", "Описание", products)
         for i, product in enumerate(category):
             self.assertEqual(product, products[i])
+
+
+class TestProductMethods(unittest.TestCase):
+    def test_smartphone_str(self):
+        """Проверка строкового представления смартфона."""
+        phone = Smartphone("iPhone 15", "512GB", 200000, 5, "A16", "Pro", 512, "Gray")
+        expected_str = "iPhone 15 (Pro), 512GB, Gray, 200000 руб. Остаток: 5 шт."
+        self.assertEqual(str(phone), expected_str)
+
+    def test_lawngrass_str(self):
+        """Проверка строкового представления газонной травы."""
+        grass = LawnGrass("GreenField", "Газонная трава", 1500.0, 20, "Нидерланды", "2 недели", "Зелёный")
+        expected_str = "GreenField, Нидерланды, Зелёный, срок прорастания: 2 недели, 1500.0 руб. Остаток: 20 шт."
+        self.assertEqual(str(grass), expected_str)
+
+    def test_product_addition_same_type(self):
+        """Проверка сложения товаров одного типа."""
+        phone1 = Smartphone("iPhone 15", "512GB", 200000, 5, "A16", "Pro", 512, "Gray")
+        phone2 = Smartphone("iPhone 15", "512GB", 200000, 3, "A16", "Pro", 512, "Gray")
+        self.assertEqual(phone1 + phone2, (200000 * 5 + 200000 * 3))
+
+    def test_product_addition_different_types(self):
+        """Проверка ошибки при сложении товаров разных типов."""
+        phone = Smartphone("iPhone 15", "512GB", 200000, 5, "A16", "Pro", 512, "Gray")
+        grass = LawnGrass("GreenField", "Газонная трава", 1500.0, 20, "Нидерланды", "2 недели", "Зелёный")
+        with self.assertRaises(TypeError):
+            _ = phone + grass
 
 
 if __name__ == "__main__":
