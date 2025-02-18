@@ -33,6 +33,11 @@ class ProductLoggerMixin:
 
 
 class Product(ProductLoggerMixin, BaseProduct):
+    def __init__(self, name: str, description: str, price: float, quantity: int):
+        if quantity <= 0:
+            raise ValueError("Товар с нулевым количеством не может быть добавлен.")
+        super().__init__(name, description, price, quantity)
+
     def __str__(self):
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
 
@@ -114,14 +119,36 @@ class Category(AbstractEntity):
         return iter(self.products)
 
     def formatted_products(self):
-        return "\\n".join(str(product) for product in self.products)
+        return "\n".join(str(product) for product in self.products)
+
+    def middle_price(self):
+        try:
+            if not self.products:
+                return 0  # Если в категории нет товаров, возвращаем 0
+
+            total_price = sum(product.price * product.quantity for product in self.products)
+            total_quantity = sum(product.quantity for product in self.products)
+
+            return round(total_price / total_quantity, 2) if total_quantity > 0 else 0
+        except ZeroDivisionError:
+            return 0  # Защита от деления на 0 (на случай ошибок)
+
+
+class OrderException(Exception):
+    """Класс исключения для ошибок при добавлении товаров в заказ."""
+
+    def __init__(self, message="Ошибка при добавлении товара в заказ."):
+        super().__init__(message)
 
 
 class Order(AbstractEntity):
     def __init__(self, product: Product, quantity: int):
+        if quantity <= 0:
+            raise OrderException(
+                "Нельзя добавить в заказ товар с нулевым количеством."
+            )  # Теперь выбрасываем исключение
+
         super().__init__(product.name, f"Заказ на {quantity} шт.")
-        if quantity < 0:
-            raise ValueError("Количество товаров в заказе не может быть отрицательным.")
         self.product = product
         self.quantity = quantity
         self.total_price = product.price * quantity
@@ -138,4 +165,17 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        product_invalid = Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+    except ValueError as e:
+        _ = e
+        print(
+         "Возникла ошибка ValueError прерывающая работу программы при попытке добавить продукт с нулевым количеством"
+        )
+    else:
+        print("Не возникла ошибка ValueError при попытке добавить продукт с нулевым количеством")
+
+    categories = load_categories_from_json("products.json")  # Загружаем категории из JSON
+
+    for category in categories:
+        print(f"Категория: {category.name}, Средняя цена: {category.middle_price()}")

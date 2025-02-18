@@ -5,7 +5,7 @@ import unittest
 
 import pytest
 
-from src.main import BaseProduct, Category, LawnGrass, Order, Product, Smartphone
+from src.main import BaseProduct, Category, LawnGrass, Order, OrderException, Product, Smartphone
 
 # Добавляем путь к src в sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src")))
@@ -78,6 +78,16 @@ class TestProduct(unittest.TestCase):
         sys.stdout = sys.__stdout__  # Восстанавливаем стандартный вывод
         assert "Создан объект: Smartphone" in captured_output.getvalue()
         assert "'name': 'iPhone 15'" in captured_output.getvalue()
+
+    def test_product_quantity_zero(self):
+        """Проверка, что при создании товара с нулевым количеством выбрасывается ValueError"""
+        with self.assertRaises(ValueError, msg="Товар с нулевым количеством не может быть добавлен."):
+            Product("Бракованный товар", "Неверное количество", 1000.0, 0)
+
+    def test_product_negative_quantity(self):
+        """Проверка, что при создании товара с отрицательным количеством выбрасывается ValueError"""
+        with self.assertRaises(ValueError, msg="Товар с нулевым количеством не может быть добавлен."):
+            Product("Бракованный товар", "Неверное количество", 1000.0, -5)
 
 
 class TestBaseProduct(unittest.TestCase):
@@ -195,6 +205,26 @@ class TestCategory(unittest.TestCase):
         for i, product in enumerate(category):
             self.assertEqual(product, products[i])
 
+    def test_category_middle_price(self):
+        """Проверка расчёта средней цены товаров в категории"""
+        product1 = Product("Товар 1", "Описание", 100, 2)  # 100 * 2
+        product2 = Product("Товар 2", "Описание", 200, 3)  # 200 * 3
+        category = Category("Тестовая категория", "Описание", [product1, product2])
+
+        expected_price = round((100 * 2 + 200 * 3) / (2 + 3), 2)  # (200 + 600) / 5 = 160.0
+        self.assertEqual(category.middle_price(), expected_price)
+
+    def test_category_middle_price_empty(self):
+        """Проверка, что для пустой категории средняя цена равна 0"""
+        category = Category("Пустая категория", "Описание", [])
+        self.assertEqual(category.middle_price(), 0)
+
+    def test_category_middle_price_one_product(self):
+        """Проверка, что если в категории один товар, его цена = средней цене"""
+        product = Product("Единственный товар", "Описание", 500, 1)
+        category = Category("Категория с одним товаром", "Описание", [product])
+        self.assertEqual(category.middle_price(), 500)
+
 
 class TestProductMethods(unittest.TestCase):
     def test_smartphone_str(self):
@@ -234,15 +264,16 @@ class TestOrder(unittest.TestCase):
         self.assertEqual(str(order), "Заказ: iPhone 15, Количество: 2, Итоговая стоимость: 420000.0 руб.")
 
     def test_order_with_zero_quantity(self):
-        """Проверка создания заказа с нулевым количеством (должен быть 0 руб.)."""
+        """Проверка, что при заказе с нулевым количеством выбрасывается исключение."""
         phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
-        order = Order(phone, 0)
-        self.assertEqual(order.total_price, 0.0)
+
+        with self.assertRaises(OrderException):  # Ожидаем OrderException
+            Order(phone, 0)
 
     def test_order_with_negative_quantity(self):
         """Проверка ошибки при создании заказа с отрицательным количеством."""
         phone = Smartphone("iPhone 15", "512GB", 210000.0, 8, "A16", "Pro", 512, "Gray")
-        with self.assertRaises(ValueError):
+        with self.assertRaises(OrderException):  # Исправляем тест, ожидаем OrderException
             Order(phone, -1)
 
 
