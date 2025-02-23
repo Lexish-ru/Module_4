@@ -7,7 +7,7 @@ from vacancy import Vacancy
 class JSONStorage:
     """Класс для сохранения и загрузки вакансий в JSON"""
 
-    def __init__(self, filename: str = "output/vacansies.json"):
+    def __init__(self, filename: str = "../output/vacansies.json"):
         self.filename = filename
         os.makedirs(os.path.dirname(self.filename), exist_ok=True)
 

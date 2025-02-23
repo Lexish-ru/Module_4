@@ -2,6 +2,7 @@ import requests
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 from vacancy import Vacancy
+from storage import JSONStorage
 
 
 class BaseAPI(ABC):
@@ -56,5 +57,12 @@ if __name__ == "__main__":
     hh = HeadHunterAPI()
     vacancies = hh.get_vacancies("Python разработчик", area=2, per_page=5)
 
-    for v in vacancies:
-        print(v)
+    storage = JSONStorage()
+    storage.save_vacansies(vacancies)
+    print("Вакансии сохранены в vacansies.json")
+
+    loaded_vacancies = storage.load_vacancies()
+    print("Загруженные вакансии из JSON:")
+
+    for vacancy in loaded_vacancies:
+        print(vacancy)
