@@ -2,7 +2,6 @@ import requests
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 from vacancy import Vacancy
-from interface import main
 
 
 class BaseAPI(ABC):
@@ -51,7 +50,3 @@ class HeadHunterAPI(BaseAPI):
             vacancies.append(vacancy)
 
         return vacancies
-
-
-if __name__ == "__main__":
-    main()
