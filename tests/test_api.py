@@ -1,9 +1,10 @@
-from unittest.mock import patch, Mock
+from unittest.mock import Mock, patch
+
 from src.api import HeadHunterAPI
 from src.vacancy import Vacancy
 
 
-def test_hh_api_get_vacancies():
+def test_hh_api_get_vacancies() -> None:
     """Тест получения вакансий через HeadHunterAPI с использованием unittest.mock."""
     mock_response = {
         "items": [
@@ -12,7 +13,7 @@ def test_hh_api_get_vacancies():
                 "alternate_url": "https://example.com",
                 "salary": {"from": 100000, "to": 150000, "currency": "RUR"},
                 "employer": {"name": "CompanyX"},
-                "snippet": {"requirement": "Python, Django", "responsibility": "Backend development"}
+                "snippet": {"requirement": "Python, Django", "responsibility": "Backend development"},
             }
         ]
     }
@@ -33,7 +34,7 @@ def test_hh_api_get_vacancies():
         assert vacancies[0].responsibility == "Backend development"
 
 
-def test_hh_api_no_results():
+def test_hh_api_no_results() -> None:
     """Тест обработки ситуации, когда API возвращает пустой список вакансий."""
     mock_response = {"items": []}
 
@@ -45,7 +46,7 @@ def test_hh_api_no_results():
         assert vacancies == []
 
 
-def test_hh_api_invalid_response():
+def test_hh_api_invalid_response() -> None:
     """Тест обработки ошибки при невалидном ответе API с использованием unittest.mock."""
     with patch("requests.get") as mock_get:
         mock_get.return_value = Mock(status_code=500)

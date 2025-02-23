@@ -1,6 +1,8 @@
-import requests
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
+import requests
+
 from src.vacancy import Vacancy
 
 
@@ -20,11 +22,7 @@ class HeadHunterAPI(BaseAPI):
 
     def get_vacancies(self, keyword: str, area: int = 2, per_page: int = 10) -> List[Vacancy]:
         """Получает вакансии с hh.ru по ключевому слову и возвращает список объектов Vacancy"""
-        params: Dict[str, Any] = {
-            "text": keyword,
-            "area": area,
-            "per_page": per_page
-        }
+        params: Dict[str, Any] = {"text": keyword, "area": area, "per_page": per_page}
 
         response = requests.get(self.BASE_URL, params=params)
 
@@ -45,7 +43,7 @@ class HeadHunterAPI(BaseAPI):
                 currency=salary_info.get("currency"),
                 employer=item.get("employer", {}).get("name", "Не указан"),
                 requirement=item.get("snippet", {}).get("requirement", "Не указано"),
-                responsibility=item.get("snippet", {}).get("responsibility", "Не указано")
+                responsibility=item.get("snippet", {}).get("responsibility", "Не указано"),
             )
             vacancies.append(vacancy)
 

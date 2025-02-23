@@ -1,6 +1,7 @@
 import json
 import os
 from typing import List
+
 from src.vacancy import Vacancy
 
 

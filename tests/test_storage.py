@@ -1,17 +1,27 @@
 import os
+
 from src.storage import JSONStorage
 from src.vacancy import Vacancy
 
 
-def test_storage_operations(tmp_path):
+def test_storage_operations() -> None:
     """Тест сохранения, загрузки, фильтрации и удаления вакансий, включая граничные случаи."""
     test_file = tmp_path / "test_vacancies.json"
     storage = JSONStorage(filename=str(test_file))
 
     vacancies = [
-        Vacancy("Python Developer", "https://example.com", 100000, 150000, "RUR", "CompanyX", "Python, Django", "Backend development"),
+        Vacancy(
+            "Python Developer",
+            "https://example.com",
+            100000,
+            150000,
+            "RUR",
+            "CompanyX",
+            "Python, Django",
+            "Backend development",
+        ),
         Vacancy("Junior Developer", "https://example.com", 50000, 70000, "RUR", "CompanyY", "Flask", "Backend"),
-        Vacancy("Intern Developer", "https://example.com", None, None, None, "CompanyZ", "Basics", "Learning")
+        Vacancy("Intern Developer", "https://example.com", None, None, None, "CompanyZ", "Basics", "Learning"),
     ]
 
     # Тест сохранения
@@ -45,7 +55,9 @@ def test_storage_operations(tmp_path):
     assert storage.load_vacancies() == []
 
     # Фильтрация по зарплате, когда у вакансии нет зарплаты
-    storage.save_vacancies([Vacancy("Intern", "https://example.com", None, None, None, "CompanyZ", "Basics", "Learning")])
+    storage.save_vacancies(
+        [Vacancy("Intern", "https://example.com", None, None, None, "CompanyZ", "Basics", "Learning")]
+    )
     assert storage.filter_vacancies_by_salary(0) == []
 
     # Удаление несуществующей вакансии
