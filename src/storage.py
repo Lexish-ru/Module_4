@@ -30,3 +30,18 @@ class JSONStorage:
         with open(self.filename, "w", encoding="utf-8") as file:
             json.dump([], file, ensure_ascii=False, indent=4)
 
+    def filter_vacancies_by_salary(self, min_salary: int) -> List[Vacancy]:
+        """Фильтрует вакансии, оставляя только те, где зарплата выше указанного минимума."""
+        vacancies = self.load_vacancies()
+        return [vacancy for vacancy in vacancies if (vacancy.salary_from and vacancy.salary_from >= min_salary)]
+
+    def sort_vacancies_by_salary(self, descending: bool = True) -> List[Vacancy]:
+        """Сортирует вакансии по зарплате (по умолчанию по убыванию)."""
+        vacancies = self.load_vacancies()
+        return sorted(vacancies, key=lambda v: v.salary_from or 0, reverse=descending)
+
+    def delete_vacancy(self, vacancy_name: str) -> None:
+        """Удаляет вакансию по названию."""
+        vacancies = self.load_vacancies()
+        vacancies = [vacancy for vacancy in vacancies if vacancy.name != vacancy_name]
+        self.save_vacancies(vacancies)
