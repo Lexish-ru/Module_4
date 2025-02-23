@@ -2,7 +2,7 @@ import requests
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
 from vacancy import Vacancy
-from storage import JSONStorage
+from interface import main
 
 
 class BaseAPI(ABC):
@@ -54,26 +54,4 @@ class HeadHunterAPI(BaseAPI):
 
 
 if __name__ == "__main__":
-    hh = HeadHunterAPI()
-    vacancies = hh.get_vacancies("Python разработчик", area=2, per_page=5)
-
-    storage = JSONStorage()
-    storage.save_vacancies(vacancies)
-    print("Вакансии сохранены в vacansies.json")
-
-    loaded_vacancies = storage.load_vacancies()
-    print("Загруженные вакансии из JSON:")
-
-    filtered_vacancies = storage.filter_vacancies_by_salary(100000)
-    sorted_vacancies = storage.sort_vacancies_by_salary()
-
-    print("Фильтрованные вакансии:")
-    for v in filtered_vacancies:
-        print(v)
-
-    print("Отсортированные вакансии:")
-    for v in sorted_vacancies:
-        print(v)
-
-    storage.delete_vacancy("Python-разработчик")
-    print("Вакансия удалена!")
+    main()
