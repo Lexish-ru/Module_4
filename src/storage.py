@@ -11,7 +11,7 @@ class JSONStorage:
         self.filename = filename
         os.makedirs(os.path.dirname(self.filename), exist_ok=True)
 
-    def save_vacansies(self, vacancies: List[Vacancy]) -> None:
+    def save_vacancies(self, vacancies: List[Vacancy]) -> None:
         """Сохраняет вакансии в JSON-файл."""
         with open(self.filename, "w", encoding="utf-8") as file:
             json.dump([vacancy.__dict__ for vacancy in vacancies], file, ensure_ascii=False, indent=4)
