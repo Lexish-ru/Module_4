@@ -1,5 +1,5 @@
-from storage import JSONStorage
-from api import HeadHunterAPI
+from src.storage import JSONStorage
+from src.api import HeadHunterAPI
 
 
 def main():

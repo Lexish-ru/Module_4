@@ -1,8 +1,6 @@
-import pytest
 from unittest.mock import patch, Mock
 from src.api import HeadHunterAPI
 from src.vacancy import Vacancy
-import requests
 
 
 def test_hh_api_get_vacancies():

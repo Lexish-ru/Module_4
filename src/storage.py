@@ -1,7 +1,7 @@
 import json
 import os
 from typing import List
-from vacancy import Vacancy
+from src.vacancy import Vacancy
 
 
 class JSONStorage:

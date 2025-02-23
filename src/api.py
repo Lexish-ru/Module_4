@@ -1,7 +1,7 @@
 import requests
 from abc import ABC, abstractmethod
 from typing import List, Dict, Any
-from vacancy import Vacancy
+from src.vacancy import Vacancy
 
 
 class BaseAPI(ABC):
