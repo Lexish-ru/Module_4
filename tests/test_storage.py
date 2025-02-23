@@ -1,10 +1,10 @@
 import os
-
+from pathlib import Path
 from src.storage import JSONStorage
 from src.vacancy import Vacancy
 
 
-def test_storage_operations() -> None:
+def test_storage_operations(tmp_path: Path) -> None:
     """Тест сохранения, загрузки, фильтрации и удаления вакансий, включая граничные случаи."""
     test_file = tmp_path / "test_vacancies.json"
     storage = JSONStorage(filename=str(test_file))

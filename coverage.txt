@@ -1,0 +1,9 @@
+Name               Stmts   Miss  Cover
+--------------------------------------
+src/__init__.py        0      0   100%
+src/api.py            20      0   100%
+src/interface.py      48     48     0%
+src/storage.py        31      4    87%
+src/vacancy.py        18      2    89%
+--------------------------------------
+TOTAL                117     54    54%
