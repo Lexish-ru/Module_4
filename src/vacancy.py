@@ -16,8 +16,7 @@ class Vacancy:
         self.responsibility = responsibility
 
     def __str__(self) -> str:
-        salary_info = f"{self.salary_from} - {self.salary_to} {self.currency}" \
-            if self.salary_from or self.salary_to else "зарплата не указана"
+        salary_info = f"{self.salary_from} - {self.salary_to} {self.currency}" if self.salary_from or self.salary_to else "Зарплата не указана"
         return (f"Вакансия: {self.name}\n"
                 f"Компания: {self.employer}\n"
                 f"Зарплата: {salary_info}\n"

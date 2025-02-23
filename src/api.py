@@ -1,31 +1,32 @@
 import requests
 from abc import ABC, abstractmethod
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from vacancy import Vacancy
 
 
 class BaseAPI(ABC):
-    """Абстрактный класс для работы с API"""
+    """Абстрактный класс для работы с API вакансий"""
 
     @abstractmethod
-    def get_vacancies(self, keyword: str, area: int = 1, per_page: int = 10) -> List[Dict[str, Any]]:
-        """Метод получения вакансий. Должен быть реализован в наследниках"""
+    def get_vacancies(self, keyword: str, area: int = 1, per_page: int = 10) -> List[Vacancy]:
+        """Метод для получения вакансий. Должен быть реализован в наследниках."""
         pass
 
+
 class HeadHunterAPI(BaseAPI):
-    """Класс для работы с API HH.ru"""
+    """Класс для работы с API hh.ru"""
 
     BASE_URL: str = "https://api.hh.ru/vacancies"
 
-    def get_vacancies(self, keyword: str, area: int = 1, per_page: int = 10)-> List[Dict[str, Any]]:
-        """Получает вакансии по ключевому слову"""
+    def get_vacancies(self, keyword: str, area: int = 2, per_page: int = 10) -> List[Vacancy]:
+        """Получает вакансии с hh.ru по ключевому слову и возвращает список объектов Vacancy"""
         params: Dict[str, Any] = {
             "text": keyword,
             "area": area,
             "per_page": per_page
         }
 
-        response: requests.Response = requests.get(self.BASE_URL, params=params)\
+        response = requests.get(self.BASE_URL, params=params)
 
         if response.status_code != 200:
             print(f"Ошибка: {response.status_code}")
@@ -35,7 +36,7 @@ class HeadHunterAPI(BaseAPI):
         vacancies: List[Vacancy] = []
 
         for item in data.get("items", []):
-            salary_info = item.get("salary", {})
+            salary_info = item.get("salary") or {}
             vacancy = Vacancy(
                 name=item.get("name", "Без названия"),
                 url=item.get("alternate_url", "Нет ссылки"),
@@ -50,11 +51,10 @@ class HeadHunterAPI(BaseAPI):
 
         return vacancies
 
+
 if __name__ == "__main__":
     hh = HeadHunterAPI()
     vacancies = hh.get_vacancies("Python разработчик", area=2, per_page=5)
 
     for v in vacancies:
         print(v)
-
-
