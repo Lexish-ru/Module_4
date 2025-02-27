@@ -8,9 +8,11 @@ from src.vacancy import Vacancy
 class JSONStorage:
     """Класс для работы с JSON-хранилищем вакансий."""
 
-    def __init__(self, filename: str = "vacancies.json"):
+    def __init__(self, filename: str = "data/vacancies.json"):
         self._filename = filename
-        os.makedirs(os.path.dirname(self._filename), exist_ok=True)
+        directory = os.path.dirname(self._filename)
+        if directory:  # Проверяем, что путь не пустой
+            os.makedirs(directory, exist_ok=True)
 
     def save_vacancies(self, vacancies: List[Vacancy]) -> None:
         """Сохраняет вакансии в JSON-файл, избегая дублирования."""

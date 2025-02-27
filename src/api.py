@@ -20,6 +20,10 @@ class HeadHunterAPI(BaseAPI):
 
     BASE_URL: str = "https://api.hh.ru/vacancies"
 
+    def get_vacancies(self, keyword: str, area: int = 2, per_page: int = 10) -> List[Vacancy]:
+        """Публичный метод для получения вакансий"""
+        return self._get_vacancies(keyword, area, per_page)
+
     def _get_vacancies(self, keyword: str, area: int = 2, per_page: int = 10) -> List[Vacancy]:
         """Получает вакансии с hh.ru по ключевому слову и возвращает список объектов Vacancy"""
         params: Dict[str, Any] = {"text": keyword, "area": area, "per_page": per_page}

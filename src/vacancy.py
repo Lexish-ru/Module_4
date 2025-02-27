@@ -35,6 +35,21 @@ class Vacancy:
         self._requirement = requirement
         self._responsibility = responsibility
 
+    def __str__(self) -> str:
+        salary_info = (
+            f"{self._salary_from} - {self._salary_to} {self._currency}"
+            if self._salary_from or self._salary_to
+            else "Зарплата не указана"
+        )
+        return (
+            f"Вакансия: {self._name}\n"
+            f"Компания: {self._employer}\n"
+            f"Зарплата: {salary_info}\n"
+            f"Требования: {self._requirement}\n"
+            f"Обязанности: {self._responsibility}\n"
+            f"Ссылка: {self._url}\n"
+        )
+
     @property
     def name(self) -> str:
         return self._name
