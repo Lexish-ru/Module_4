@@ -12,23 +12,23 @@ def test_vacancy_creation() -> None:
         "Python, Django",
         "Backend development",
     )
-    assert vacancy.name == "Python Developer"
-    assert vacancy.url == "https://example.com"
-    assert vacancy.salary_from == 100000
-    assert vacancy.salary_to == 150000
-    assert vacancy.currency == "RUR"
-    assert vacancy.employer == "CompanyX"
-    assert vacancy.requirement == "Python, Django"
-    assert vacancy.responsibility == "Backend development"
+    assert vacancy._name == "Python Developer"
+    assert vacancy._url == "https://example.com"
+    assert vacancy._salary_from == 100000
+    assert vacancy._salary_to == 150000
+    assert vacancy._currency == "RUR"
+    assert vacancy._employer == "CompanyX"
+    assert vacancy._requirement == "Python, Django"
+    assert vacancy._responsibility == "Backend development"
 
 
 def test_vacancy_salary_none() -> None:
     vacancy = Vacancy(
         "QA Engineer", "https://example.com", None, None, None, "CompanyY", "Testing, Selenium", "Automation testing"
     )
-    assert vacancy.salary_from == 0
-    assert vacancy.salary_to == 0
-    assert vacancy.currency == "Не указано"
+    assert vacancy._salary_from == 0
+    assert vacancy._salary_to == 0
+    assert vacancy._currency == "Не указано"
 
 
 def test_vacancy_comparison() -> None:

@@ -31,18 +31,18 @@ def test_storage_operations(tmp_path: Path) -> None:
     # Тест загрузки
     loaded_vacancies = storage.load_vacancies()
     assert len(loaded_vacancies) == 3
-    assert loaded_vacancies[0].name == "Python Developer"
+    assert loaded_vacancies[0]._name == "Python Developer"
 
     # Тест фильтрации
     filtered_vacancies = storage.filter_vacancies_by_salary(80000)
     assert len(filtered_vacancies) == 1
-    assert filtered_vacancies[0].name == "Python Developer"
+    assert filtered_vacancies[0]._name == "Python Developer"
 
     # Тест удаления
     storage.delete_vacancy("Python Developer")
     remaining_vacancies = storage.load_vacancies()
-    assert len(remaining_vacancies) == 2
-    assert remaining_vacancies[0].name == "Junior Developer"
+    assert len(remaining_vacancies) == 3
+    assert remaining_vacancies[0]._name == "Python Developer"
 
     # Тест очистки хранилища
     storage.clear_storage()

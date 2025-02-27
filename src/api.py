@@ -1,8 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
-
 import requests
-
 from src.vacancy import Vacancy
 
 
@@ -10,8 +8,8 @@ class BaseAPI(ABC):
     """Абстрактный класс для работы с API вакансий"""
 
     @abstractmethod
-    def get_vacancies(self, keyword: str, area: int = 1, per_page: int = 10) -> List[Vacancy]:
-        """Метод для получения вакансий. Должен быть реализован в наследниках."""
+    def _get_vacancies(self, keyword: str, area: int = 1, per_page: int = 10) -> List[Vacancy]:
+        """Приватный метод для получения вакансий. Должен быть реализован в наследниках."""
         pass
 
 
@@ -20,7 +18,7 @@ class HeadHunterAPI(BaseAPI):
 
     BASE_URL: str = "https://api.hh.ru/vacancies"
 
-    def get_vacancies(self, keyword: str, area: int = 2, per_page: int = 10) -> List[Vacancy]:
+    def _get_vacancies(self, keyword: str, area: int = 2, per_page: int = 10) -> List[Vacancy]:
         """Получает вакансии с hh.ru по ключевому слову и возвращает список объектов Vacancy"""
         params: Dict[str, Any] = {"text": keyword, "area": area, "per_page": per_page}
 

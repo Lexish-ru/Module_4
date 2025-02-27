@@ -1,46 +1,68 @@
-from typing import Optional
+from typing import Any, Dict
 
 
 class Vacancy:
     """Класс для представления вакансии."""
+    __slots__ = ("_name", "_url", "_salary_from", "_salary_to", "_currency", "_employer", "_requirement", "_responsibility")
 
     def __init__(
         self,
         name: str,
         url: str,
-        salary_from: Optional[int],
-        salary_to: Optional[int],
-        currency: Optional[str],
+        salary_from: int,
+        salary_to: int,
+        currency: str,
         employer: str,
         requirement: str,
         responsibility: str,
     ):
-        self.name = name
-        self.url = url
-        self.salary_from = salary_from if salary_from is not None else 0
-        self.salary_to = salary_to if salary_to is not None else 0
-        self.currency = currency if currency is not None else "Не указано"
-        self.employer = employer
-        self.requirement = requirement
-        self.responsibility = responsibility
+        self._name = name
+        self._url = url
+        self._salary_from = salary_from or 0
+        self._salary_to = salary_to or 0
+        self._currency = currency or "Не указано"
+        self._employer = employer
+        self._requirement = requirement
+        self._responsibility = responsibility
 
-    def __str__(self) -> str:
-        salary_info = (
-            f"{self.salary_from} - {self.salary_to} {self.currency}"
-            if self.salary_from or self.salary_to
-            else "Зарплата не указана"
+    @property
+    def name(self) -> str:
+        return self._name
+
+    @property
+    def salary_from(self) -> int:
+        return self._salary_from
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Преобразует объект вакансии в словарь для JSON."""
+        return {
+            "name": self._name,
+            "url": self._url,
+            "salary_from": self._salary_from,
+            "salary_to": self._salary_to,
+            "currency": self._currency,
+            "employer": self._employer,
+            "requirement": self._requirement,
+            "responsibility": self._responsibility,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Vacancy":
+        """Создает объект вакансии из словаря JSON."""
+        return cls(
+            name=data["name"],
+            url=data["url"],
+            salary_from=data.get("salary_from", 0),
+            salary_to=data.get("salary_to", 0),
+            currency=data.get("currency", "Не указано"),
+            employer=data["employer"],
+            requirement=data["requirement"],
+            responsibility=data["responsibility"],
         )
-        return (
-            f"Вакансия: {self.name}\n"
-            f"Компания: {self.employer}\n"
-            f"Зарплата: {salary_info}\n"
-            f"Требования: {self.requirement}\n"
-            f"Обязанности: {self.responsibility}\n"
-            f"Ссылка: {self.url}\n"
-        )
+
 
     def __lt__(self, other: "Vacancy") -> bool:
-        return self.salary_from < other.salary_from
+        return self._salary_from < other._salary_from
 
     def __gt__(self, other: "Vacancy") -> bool:
-        return self.salary_from > other.salary_from
+        return self._salary_from > other._salary_from
