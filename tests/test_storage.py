@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from src.storage import JSONStorage
 from src.vacancy import Vacancy
 

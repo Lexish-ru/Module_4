@@ -3,7 +3,17 @@ from typing import Any, Dict
 
 class Vacancy:
     """Класс для представления вакансии."""
-    __slots__ = ("_name", "_url", "_salary_from", "_salary_to", "_currency", "_employer", "_requirement", "_responsibility")
+
+    __slots__ = (
+        "_name",
+        "_url",
+        "_salary_from",
+        "_salary_to",
+        "_currency",
+        "_employer",
+        "_requirement",
+        "_responsibility",
+    )
 
     def __init__(
         self,
@@ -59,7 +69,6 @@ class Vacancy:
             requirement=data["requirement"],
             responsibility=data["responsibility"],
         )
-
 
     def __lt__(self, other: "Vacancy") -> bool:
         return self._salary_from < other._salary_from
